@@ -9,7 +9,7 @@ import AuthorsMenu from './AuthorsMenu'
 import MobileNav from './MobileNav'
 import ThemeSwitch from '../theme/ThemeSwitch'
 import LangSwitch from '../langswitch'
-import SearchButton from '../search/SearchButton'
+//import SearchButton from '../search/SearchButton'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { motion } from 'framer-motion'
@@ -71,7 +71,7 @@ const Header = () => {
               )
             })}
           <AuthorsMenu className="hidden sm:block" />
-          <SearchButton />
+          {/*<SearchButton />*/}
           <ThemeSwitch />
           <LangSwitch />
           <MobileNav />

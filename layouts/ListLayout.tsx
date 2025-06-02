@@ -3,8 +3,6 @@
 import { useState, useMemo } from 'react'
 import { useTagStore } from '@/components/util/useTagStore'
 import { motion } from 'framer-motion'
-import { formatDate } from 'pliny/utils/formatDate'
-import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
 import Link from '@/components/mdxcomponents/Link'
 import { sortByDate } from '@/components/util/sortByDate'
@@ -13,6 +11,7 @@ import tagData from 'app/[locale]/tag-data.json'
 import { POSTS_PER_PAGE } from '@/data/postsPerPage'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
+import { format, parseISO } from 'date-fns'
 
 interface PaginationProps {
   totalPages: number
@@ -22,9 +21,9 @@ interface PaginationProps {
 
 interface ListLayoutProps {
   params: { locale: LocaleTypes }
-  posts: CoreContent<Blog>[]
+  posts: Blog[]
   title: string
-  initialDisplayPosts?: CoreContent<Blog>[]
+  initialDisplayPosts?: Blog[]
   pagination?: PaginationProps
 }
 
@@ -127,7 +126,7 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
                         <dl>
                           <dt className="sr-only">{t('pub')}</dt>
                           <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                            <time dateTime={date}>{formatDate(date, language)}</time>
+                            <time dateTime={date}>{format(parseISO(post.date), 'LLLL d, yyyy')}</time>
                           </dd>
                         </dl>
                         <div className="space-y-3">

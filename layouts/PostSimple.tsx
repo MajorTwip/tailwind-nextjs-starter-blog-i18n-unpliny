@@ -1,9 +1,5 @@
 import { ReactNode } from 'react'
-import { formatDate } from 'pliny/utils/formatDate'
-import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
-import WalineComments from '@/components/comments/walinecomponents/walineComments'
-import Comments from '@/components/comments/Comments'
 import Link from '@/components/mdxcomponents/Link'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
@@ -13,11 +9,11 @@ import { createTranslation } from 'app/[locale]/i18n/server'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { PostSeriesBox } from '@/components/seriescard'
 import Share from '@/components/share'
-import { Toc } from 'pliny/mdx-plugins'
-import Sidetoc from '@/components/sidetoc'
+import { format, parseISO } from 'date-fns'
+
 
 interface PostSimpleProps {
-  content: CoreContent<Blog>
+  content: Blog
   children: ReactNode
   next?: { slug: string; title: string }
   prev?: { slug: string; title: string }
@@ -31,13 +27,10 @@ export default async function PostLayout({
   children,
   params: { locale },
 }: PostSimpleProps) {
-  const { slug, date, title, language, series, toc } = content
-  const tableOfContents: Toc = toc as unknown as Toc
+  const { slug, date, title, language, series } = content
   const { t } = await createTranslation(locale, 'home')
   return (
     <>
-      <ScrollTopAndComment />
-      <Sidetoc toc={tableOfContents} />
       <SectionContainer>
         <article>
           <div>
@@ -47,7 +40,7 @@ export default async function PostLayout({
                   <div>
                     <dt className="sr-only">{t('pub')}</dt>
                     <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                      <time dateTime={date}>{formatDate(date, language)}</time>
+                      <time dateTime={date}>{format(parseISO(date), 'LLLL d, yyyy')}</time>
                     </dd>
                   </div>
                 </dl>
@@ -66,12 +59,6 @@ export default async function PostLayout({
                 <div className="prose max-w-none pb-8 pt-10 dark:prose-invert">{children}</div>
               </div>
               <Share title={title} slug={slug} />
-              <div className="pb-6 pt-6 text-center text-gray-700 dark:text-gray-300" id="comment">
-                {siteMetadata.iswaline === true && <WalineComments />}
-                {siteMetadata.comments && siteMetadata.iscomments === true && (
-                  <Comments slug={slug} />
-                )}
-              </div>
               <footer>
                 <div className="flex flex-col text-sm font-medium sm:flex-row sm:justify-between sm:text-base">
                   {prev && prev.slug && (

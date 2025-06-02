@@ -1,8 +1,5 @@
 import { ReactNode } from 'react'
-import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog, Authors } from 'contentlayer/generated'
-import Comments from '@/components/comments/Comments'
-import WalineComments from '@/components/comments/walinecomponents/walineComments'
 import Link from '@/components/mdxcomponents/Link'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
@@ -14,8 +11,6 @@ import { createTranslation } from 'app/[locale]/i18n/server'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { PostSeriesBox } from '@/components/seriescard'
 import Share from '@/components/share'
-import { Toc } from 'pliny/mdx-plugins'
-import Sidetoc from '@/components/sidetoc'
 
 const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`
 const discussUrl = (path) =>
@@ -29,8 +24,8 @@ const postDateTemplate: Intl.DateTimeFormatOptions = {
 }
 
 interface LayoutProps {
-  content: CoreContent<Blog>
-  authorDetails: CoreContent<Authors>[]
+  content: Blog
+  authorDetails: Authors[]
   next?: { slug: string; title: string }
   prev?: { slug: string; title: string }
   children: ReactNode
@@ -45,14 +40,11 @@ export default async function PostLayout({
   children,
   params: { locale },
 }: LayoutProps) {
-  const { filePath, path, slug, date, title, tags, language, series, toc } = content
+  const { filePath, path, slug, date, title, tags, language, series } = content
   const basePath = path.split('/')[0]
   const { t } = await createTranslation(locale, 'home')
-  const tableOfContents: Toc = toc as unknown as Toc
   return (
     <>
-      <ScrollTopAndComment />
-      <Sidetoc toc={tableOfContents} />
       <article>
         <div className="xl:divide-y xl:divide-gray-200 xl:dark:divide-gray-700">
           <header className="pt-6 xl:pb-6">
@@ -126,15 +118,6 @@ export default async function PostLayout({
                 <Link href={editUrl(filePath)}>{t('github')}</Link>
               </div>
               <Share title={title} slug={slug} />
-              <div
-                className="mt-10 pb-6 pt-6 text-center text-gray-700 dark:text-gray-300"
-                id="comment"
-              >
-                {siteMetadata.iswaline === true && <WalineComments />}
-                {siteMetadata.comments && siteMetadata.iscomments === true && (
-                  <Comments slug={slug} />
-                )}
-              </div>
             </div>
             <footer>
               <div className="divide-gray-200 text-sm font-medium leading-5 dark:divide-gray-700 xl:col-start-1 xl:row-start-2 xl:divide-y">

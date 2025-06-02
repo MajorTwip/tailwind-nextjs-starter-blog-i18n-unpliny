@@ -1,8 +1,8 @@
 import React from 'react'
 import Link from '@/components/mdxcomponents/Link'
 import Tag from '@/components/tag'
-import { formatDate } from 'pliny/utils/formatDate'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
+import { format, parseISO } from 'date-fns'
 
 interface Post {
   slug: string
@@ -34,7 +34,7 @@ const PostList: React.FC<PostListProps> = ({ posts, locale, t, maxDisplay }) => 
                 <dl>
                   <dt className="sr-only">{t('pub')}</dt>
                   <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                    <time dateTime={date}>{formatDate(date, locale)}</time>
+                    <time dateTime={date}>{format(parseISO(post.date), 'LLLL d, yyyy')}</time>
                   </dd>
                 </dl>
                 <div className="space-y-5 xl:col-span-3">

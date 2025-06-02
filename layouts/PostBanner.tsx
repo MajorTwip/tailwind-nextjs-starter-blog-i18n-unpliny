@@ -1,10 +1,6 @@
 import { ReactNode } from 'react'
 import Image from '@/components/mdxcomponents/Image'
-import Bleed from 'pliny/ui/Bleed'
-import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
-import Comments from '@/components/comments/Comments'
-import WalineComments from '@/components/comments/walinecomponents/walineComments'
 import Link from '@/components/mdxcomponents/Link'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
@@ -13,11 +9,9 @@ import ScrollTopAndComment from '@/components/scroll'
 import { PostSeriesBox } from '@/components/seriescard'
 import Share from '@/components/share'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
-import { Toc } from 'pliny/mdx-plugins'
-import Sidetoc from '@/components/sidetoc'
 
 interface PostBannerProps {
-  content: CoreContent<Blog>
+  content: Blog
   children: ReactNode
   next?: { slug: string; title: string }
   prev?: { slug: string; title: string }
@@ -31,25 +25,20 @@ export default function PostMinimal({
   children,
   params: { locale },
 }: PostBannerProps) {
-  const { slug, title, images, series, toc } = content
-  const tableOfContents: Toc = toc as unknown as Toc
+  const { slug, title, images, series } = content
   const displayImage =
     images && images.length > 0 ? images[0] : 'https://picsum.photos/seed/picsum/800/400'
 
   return (
     <>
-      <ScrollTopAndComment />
-      <Sidetoc toc={tableOfContents} />
       <SectionContainer>
         <article>
           <div>
             <div className="space-y-1 pb-10 text-center dark:border-gray-700">
               <div className="w-full">
-                <Bleed>
                   <div className="relative aspect-[2/1] w-full">
                     <Image src={displayImage} alt={title} fill className="object-cover" />
                   </div>
-                </Bleed>
               </div>
               <div className="relative pt-10">
                 <PageTitle>{title}</PageTitle>
@@ -62,12 +51,6 @@ export default function PostMinimal({
             )}
             <div className="prose max-w-none py-4 dark:prose-invert">{children}</div>
             <Share title={title} slug={slug} />
-            <div className="pb-6 pt-6 text-center text-gray-700 dark:text-gray-300" id="comment">
-              {siteMetadata.iswaline === true && <WalineComments />}
-              {siteMetadata.comments && siteMetadata.iscomments === true && (
-                <Comments slug={slug} />
-              )}
-            </div>
             <footer>
               <div className="flex flex-col text-sm font-medium sm:flex-row sm:justify-between sm:text-base">
                 {prev && prev.slug && (

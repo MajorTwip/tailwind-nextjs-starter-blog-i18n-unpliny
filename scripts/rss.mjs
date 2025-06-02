@@ -1,11 +1,11 @@
 import { writeFileSync, mkdirSync } from 'fs'
 import path from 'path'
 import { slug } from 'github-slugger'
-import { escape } from 'pliny/utils/htmlEscaper.js'
+import { escape } from 'html-escaper'
 import siteMetadata from '../data/siteMetadata.js'
 import tagData from '../app/[locale]/tag-data.json' with { type: 'json' }
 import { allBlogs } from '../.contentlayer/generated/index.mjs'
-import { sortPosts } from 'pliny/utils/contentlayer.js'
+import { compareDesc } from 'date-fns'
 
 const defaultLocale = 'en'
 
@@ -43,7 +43,7 @@ async function generateRSS(config, allBlogs, locale, page = 'feed.xml') {
 
   // RSS for blog posts
   if (publishPosts.length > 0) {
-    const rss = generateRss(config, sortPosts(publishPosts), locale)
+    const rss = generateRss(config, publishPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date))), locale)
     const directoryPath = path.join('public', locale)
     mkdirSync(directoryPath, { recursive: true }) // Create the directory if it doesn't exist
     writeFileSync(path.join(directoryPath, page), rss)
@@ -55,7 +55,7 @@ async function generateRSS(config, allBlogs, locale, page = 'feed.xml') {
       post.tags.map((t) => slug(t)).includes(tag)
     )
     if (filteredTagPosts.length > 0) {
-      const rss = generateRss(config, sortPosts(filteredTagPosts), locale, `tags/${tag}/${page}`)
+      const rss = generateRss(config, filteredTagPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date))), locale, `tags/${tag}/${page}`)
       const rssPath = path.join('public', locale, 'tags', tag)
       mkdirSync(rssPath, { recursive: true }) // Create the directory if it doesn't exist
       writeFileSync(path.join(rssPath, page), rss)

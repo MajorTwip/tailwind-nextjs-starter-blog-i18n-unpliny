@@ -2,8 +2,6 @@ import 'css/prism.css'
 import 'katex/dist/katex.css'
 import { Metadata } from 'next'
 import { components } from '@/components/mdxcomponents'
-import { MDXLayoutRenderer } from 'pliny/mdx-components'
-import { sortPosts, coreContent, allCoreContent } from 'pliny/utils/contentlayer'
 import { allBlogs, allAuthors } from 'contentlayer/generated'
 import type { Authors, Blog } from 'contentlayer/generated'
 import PostSimple from '@/layouts/PostSimple'
@@ -13,6 +11,9 @@ import siteMetadata from '@/data/siteMetadata'
 import { maintitle } from '@/data/localeMetadata'
 import { notFound } from 'next/navigation'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
+import { compareDesc } from 'date-fns'
+import { getMDXComponent } from 'next-contentlayer2/hooks'
+
 
 interface PageProps {
   params: Promise<{
@@ -75,7 +76,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata 
     const authorResults = allAuthors
       .filter((a) => a.language === locale)
       .find((a) => a.slug.includes(author))
-    return coreContent(authorResults as Authors)
+    return (authorResults as Authors)
   })
   const publishedAt = new Date(post.date).toISOString()
   const modifiedAt = new Date(post.lastmod || post.date).toISOString()
@@ -123,8 +124,8 @@ export default async function Page({ params }: PageProps) {
   const { slug, locale } = await params
   const dslug = decodeURI(slug.join('/'))
 
-  const sortedCoreContents = allCoreContent(
-    sortPosts(allBlogs.filter((p) => p.language === locale))
+  const sortedCoreContents = (
+    allBlogs.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date))).filter((p) => p.language === locale)
   )
   const postIndex = sortedCoreContents.findIndex((p) => p.slug === dslug)
   if (postIndex === -1) {
@@ -140,9 +141,9 @@ export default async function Page({ params }: PageProps) {
     const authorResults = allAuthors
       .filter((a) => a.language === locale)
       .find((a) => a.slug.includes(author))
-    return coreContent(authorResults as Authors)
+    return (authorResults as Authors)
   })
-  const mainContent = coreContent(post)
+  const mainContent = (post)
   const jsonLd = post.structuredData
   jsonLd['author'] = authorDetails.map((author) => {
     return {
@@ -152,6 +153,9 @@ export default async function Page({ params }: PageProps) {
   })
 
   const Layout = layouts[post.layout || defaultLayout]
+
+    const MDXContent = getMDXComponent(post.body.code)
+
 
   return (
     <>
@@ -166,7 +170,7 @@ export default async function Page({ params }: PageProps) {
         prev={prev}
         params={{ locale }}
       >
-        <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
+        <MDXContent components={components}/>
       </Layout>
     </>
   )

@@ -1,12 +1,11 @@
 import { Metadata } from 'next'
 import { Authors, allAuthors } from 'contentlayer/generated'
-import { MDXLayoutRenderer } from 'pliny/mdx-components'
 import AuthorLayout from '@/layouts/AuthorLayout'
-import { coreContent } from 'pliny/utils/contentlayer'
 import { genPageMetadata } from 'app/[locale]/seo'
 import { createTranslation } from 'app/[locale]/i18n/server'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { notFound } from 'next/navigation'
+import { getMDXComponent } from 'next-contentlayer2/hooks'
 
 interface PageProps {
   params: Promise<{
@@ -38,11 +37,13 @@ export default async function Page({ params }: PageProps) {
   if (authorIndex === -1) {
     return notFound()
   }
-  const mainContent = coreContent(author)
+  const mainContent = (author)
 
+  const MDXContent = getMDXComponent(author.body.code)
+  
   return (
     <AuthorLayout params={{ locale }} content={mainContent}>
-      <MDXLayoutRenderer code={author.body.code} />
+        <MDXContent/>
     </AuthorLayout>
   )
 }
