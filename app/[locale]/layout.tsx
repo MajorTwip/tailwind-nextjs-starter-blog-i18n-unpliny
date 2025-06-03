@@ -1,7 +1,7 @@
 import 'css/tailwind.css'
 
 import { Space_Grotesk } from 'next/font/google'
-//import { SearchProvider } from '@/components/search/SearchProvider'
+import { SearchProvider } from '@/components/search/SearchProvider'
 import Header from '@/components/navigation/Header'
 import SectionContainer from '@/components/SectionContainer'
 import Footer from '@/components/navigation/Footer'
@@ -104,10 +104,10 @@ export default async function RootLayout({
         <ThemeProvider>
           <SectionContainer>
             <div className="flex h-screen flex-col justify-between font-sans">
-              {/*<SearchProvider>*/}  
+              <SearchProvider>
                 <Header />
                 <main className="mb-auto">{children}</main>
-              {/*</SearchProvider>*/}
+              </SearchProvider>
               <Footer />
             </div>
           </SectionContainer>

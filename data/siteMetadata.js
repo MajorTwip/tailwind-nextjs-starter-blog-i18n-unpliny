@@ -1,4 +1,3 @@
-/** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
   title: 'Next.js i18n Starter Blog',
   author: 'Tails Azimuth',

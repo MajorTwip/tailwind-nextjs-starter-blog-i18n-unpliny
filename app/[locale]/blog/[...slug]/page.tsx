@@ -154,7 +154,7 @@ export default async function Page({ params }: PageProps) {
 
   const Layout = layouts[post.layout || defaultLayout]
 
-    const MDXContent = getMDXComponent(post.body.code)
+  const MDXContent = getMDXComponent(post.body.code)
 
 
   return (
